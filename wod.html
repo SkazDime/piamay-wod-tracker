@@ -1,33 +1,227 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Workout of the Day</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout of the Day</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .wod-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .wod-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .wod-header h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .wod-date {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .program-progress {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .wod-main {
+            padding: 40px;
+        }
+
+        .wod-focus {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .wod-focus h3 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .wod-intensity {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .wod-intensity strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .wod-details {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .wod-details p {
+            margin-bottom: 12px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .wod-details p:last-child {
+            margin-bottom: 0;
+        }
+
+        .wod-details strong {
+            color: #333;
+        }
+
+        .wod-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8e8;
+            border-color: #667eea;
+        }
+
+        .schedule-container {
+            padding: 40px;
+        }
+
+        .schedule-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .schedule-table thead {
+            background: #f5f5f5;
+        }
+
+        .schedule-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .schedule-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            color: #666;
+        }
+
+        .schedule-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        @media (max-width: 600px) {
+            .wod-header {
+                padding: 20px;
+            }
+
+            .wod-header h2 {
+                font-size: 24px;
+            }
+
+            .wod-main {
+                padding: 20px;
+            }
+
+            .wod-focus h3 {
+                font-size: 24px;
+            }
+
+            .wod-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .schedule-container {
+                padding: 20px;
+            }
+
+            .schedule-table {
+                font-size: 14px;
+            }
+
+            .schedule-table th,
+            .schedule-table td {
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
-
 <body>
+    <div class="wod-container">
+        <div id="wodContainer">
+            <div class="wod-header">
+                <h2>📅 Loading Workout...</h2>
+            </div>
+        </div>
+    </div>
 
-<h1>Workout of the Day</h1>
-
-<!-- Program Start Date Input -->
-<div id="startDateContainer" style="margin-bottom:20px;">
-    <label for="programStartInput">Program Start Date (MM/DD/YYYY):</label>
-    <input type="text" id="programStartInput" placeholder="MM/DD/YYYY">
-    <button onclick="setProgramStart()">Set Start Date</button>
-</div>
-
-<h2 id="weekDisplay"></h2>
-<h3 id="dayDisplay"></h3>
-
-<pre id="wodContainer" style="white-space: pre-wrap; background:#f4f4f4; padding:15px; border-radius:5px;"></pre>
-
-<a href="index.html">
-    <button>Return to Dashboard</button>
-</a>
-
-<script src="wod.js"></script>
+    <script src="wod.js"></script>
 </body>
-
 </html>

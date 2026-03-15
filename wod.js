@@ -8,17 +8,18 @@ if(localStorage.getItem("programStart")){
     programStart = new Date(localStorage.getItem("programStart"));
 }
 
-// Calculate current program week/day
+// ---------------- Calculate current program week/day ----------------
 function getProgramDay(){
     const today = new Date();
 
+    // If program hasn't started yet
     if(today < programStart){
-        return {week:0, day:0}; // Before program starts
+        return {week:0, day:0};
     }
 
     const diff = Math.floor((today - programStart) / (1000*60*60*24));
     const week = Math.floor(diff / 6) + 1; // 6-day training week
-    const day = (diff % 6) + 1; // Day 1–6
+    const day = (diff % 6) + 1; // 1–6
 
     return {week, day};
 }
@@ -49,7 +50,9 @@ const runningProgression = {
 
 // ---------------- Generate Workout Text ----------------
 function generateWorkout(week, day) {
-    if(week < 1 || week > 20) return "Program has not started or has finished.";
+    if(week < 1 || week > 20){
+        return "Program has not started or has finished.";
+    }
 
     const run = runningProgression[week];
 
@@ -120,16 +123,20 @@ Foam rolling`;
 function loadWOD() {
     const p = getProgramDay();
 
+    const weekEl = document.getElementById("weekDisplay");
+    const dayEl = document.getElementById("dayDisplay");
+    const wodEl = document.getElementById("wodContainer");
+
     if(p.week === 0){
-        document.getElementById("weekDisplay").innerText = "Program has not started yet.";
-        document.getElementById("dayDisplay").innerText = "";
-        document.getElementById("wodContainer").innerText = "";
+        weekEl.innerText = "Program has not started yet.";
+        dayEl.innerText = "";
+        wodEl.innerText = "Please set a start date on the dashboard.";
         return;
     }
 
-    document.getElementById("weekDisplay").innerText = "Week " + p.week + " of 20";
-    document.getElementById("dayDisplay").innerText = "Day " + p.day;
-    document.getElementById("wodContainer").innerText = generateWorkout(p.week, p.day);
+    weekEl.innerText = "Week " + p.week + " of 20";
+    dayEl.innerText = "Day " + p.day;
+    wodEl.innerText = generateWorkout(p.week, p.day);
 }
 
 loadWOD();

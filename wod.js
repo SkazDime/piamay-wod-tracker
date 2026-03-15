@@ -1,5 +1,9 @@
 // ---------------------- wod.js ----------------------
 
+// wod.js
+const WOD_VERSION = "V1.01"; // YYYYMMDD or v2, etc.
+console.log("WOD script version:", WOD_VERSION);
+
 // Default program start date (fallback)
 let programStart = new Date(2026, 2, 16); // March 16, 2026 (month 0-indexed)
 

@@ -88,6 +88,10 @@ pre#wodContainer { white-space: pre-wrap; background:#f4f4f4; padding:15px; bord
     <tbody></tbody>
 </table>
 
+<!-- Include WOD JS with version number to bust cache -->
+<script src="wod.js?v=V1.01"></script>
+
+<!-- Inline JS for dashboard or extra functions -->
 <script>
 // ---------------------- WOD + Dashboard JS ----------------------
 
@@ -96,12 +100,14 @@ let programStart = new Date("03/16/2026");
 
 // ---------------- Parse MM/DD/YYYY safely ----------------
 function parseDateMMDDYYYY(str) {
+    if(!str) return null;
     const parts = str.split("/");
     if(parts.length !== 3) return null;
-    const month = parseInt(parts[0], 10) - 1;
-    const day = parseInt(parts[1], 10);
-    const year = parseInt(parts[2], 10);
-    return new Date(year, month, day);
+    const mm = parseInt(parts[0],10);
+    const dd = parseInt(parts[1],10);
+    const yyyy = parseInt(parts[2],10);
+    if(isNaN(mm) || isNaN(dd) || isNaN(yyyy)) return null;
+    return new Date(yyyy, mm-1, dd); // monthIndex 0-based
 }
 
 // Load saved program start date

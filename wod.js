@@ -155,4 +155,4 @@ generateWorkout(p.week,p.day)
 
 }
 
-loadWOD()s
+loadWOD()

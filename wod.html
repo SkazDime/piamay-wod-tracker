@@ -2,29 +2,32 @@
 <html>
 
 <head>
-
 <meta charset="UTF-8">
 <title>Workout of the Day</title>
-
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
 <h1>Workout of the Day</h1>
 
+<!-- Program Start Date Input -->
+<div id="startDateContainer" style="margin-bottom:20px;">
+    <label for="programStartInput">Program Start Date (MM/DD/YYYY):</label>
+    <input type="text" id="programStartInput" placeholder="MM/DD/YYYY">
+    <button onclick="setProgramStart()">Set Start Date</button>
+</div>
+
 <h2 id="weekDisplay"></h2>
 <h3 id="dayDisplay"></h3>
 
-<pre id="wodContainer"></pre>
+<pre id="wodContainer" style="white-space: pre-wrap; background:#f4f4f4; padding:15px; border-radius:5px;"></pre>
 
 <a href="index.html">
-<button>Return to Dashboard</button>
+    <button>Return to Dashboard</button>
 </a>
 
 <script src="wod.js"></script>
-
 </body>
 
 </html>

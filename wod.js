@@ -11,15 +11,19 @@ if(localStorage.getItem("programStart")){
 // ---------------- Calculate current program week/day ----------------
 function getProgramDay(){
     const today = new Date();
+    // strip time
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-    // If program hasn't started yet
-    if(today < programStart){
+    // strip time from programStart
+    const start = new Date(programStart.getFullYear(), programStart.getMonth(), programStart.getDate());
+
+    if(todayDate < start){
         return {week:0, day:0};
     }
 
-    const diff = Math.floor((today - programStart) / (1000*60*60*24));
-    const week = Math.floor(diff / 6) + 1; // 6-day training week
-    const day = (diff % 6) + 1; // 1–6
+    const diff = Math.floor((todayDate - start) / (1000*60*60*24));
+    const week = Math.floor(diff / 6) + 1;
+    const day = (diff % 6) + 1;
 
     return {week, day};
 }

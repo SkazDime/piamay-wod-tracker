@@ -1,20 +1,30 @@
 // ---------------------- wod.js ----------------------
 
 // Default program start date
-let programStart = new Date("2026-03-16");
+let programStart = new Date("03/16/2026");
 
-// Load saved program start date from localStorage (if set)
+// ---------------- Parse MM/DD/YYYY safely ----------------
+function parseDateMMDDYYYY(str) {
+    // expects "MM/DD/YYYY"
+    const parts = str.split("/");
+    if(parts.length !== 3) return null;
+    const month = parseInt(parts[0], 10) - 1; // JS months 0–11
+    const day = parseInt(parts[1], 10);
+    const year = parseInt(parts[2], 10);
+    return new Date(year, month, day); // time defaults to 00:00 local
+}
+
+// ---------------- Load saved program start date ----------------
 if(localStorage.getItem("programStart")){
-    programStart = new Date(localStorage.getItem("programStart"));
+    const saved = parseDateMMDDYYYY(localStorage.getItem("programStart"));
+    if(saved) programStart = saved;
 }
 
 // ---------------- Calculate current program week/day ----------------
 function getProgramDay(){
     const today = new Date();
-    // strip time
     const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-    // strip time from programStart
     const start = new Date(programStart.getFullYear(), programStart.getMonth(), programStart.getDate());
 
     if(todayDate < start){
@@ -22,8 +32,8 @@ function getProgramDay(){
     }
 
     const diff = Math.floor((todayDate - start) / (1000*60*60*24));
-    const week = Math.floor(diff / 6) + 1;
-    const day = (diff % 6) + 1;
+    const week = Math.floor(diff / 6) + 1; // 6-day training week
+    const day = (diff % 6) + 1; // Day 1–6
 
     return {week, day};
 }
@@ -134,7 +144,7 @@ function loadWOD() {
     if(p.week === 0){
         weekEl.innerText = "Program has not started yet.";
         dayEl.innerText = "";
-        wodEl.innerText = "Please set a start date on the dashboard.";
+        wodEl.innerText = "Please set a valid start date (MM/DD/YYYY) on the dashboard.";
         return;
     }
 
@@ -148,17 +158,23 @@ loadWOD();
 // ---------------- Set Program Start Date Dynamically ----------------
 function setProgramStart(){
     const input = document.getElementById("programStartInput").value;
-    if(input){
-        programStart = new Date(input);
+    const date = parseDateMMDDYYYY(input);
+    if(date){
+        programStart = date;
         localStorage.setItem("programStart", input);
         alert("Program start date set to: " + input);
         loadWOD(); // Refresh today's workout
+    } else {
+        alert("Invalid date! Use MM/DD/YYYY format.");
     }
 }
 
 // ---------------- Pre-fill date input ----------------
 window.onload = () => {
     if(document.getElementById("programStartInput")){
-        document.getElementById("programStartInput").value = programStart.toISOString().slice(0,10);
+        const mm = (programStart.getMonth()+1).toString().padStart(2,'0');
+        const dd = programStart.getDate().toString().padStart(2,'0');
+        const yyyy = programStart.getFullYear();
+        document.getElementById("programStartInput").value = `${mm}/${dd}/${yyyy}`;
     }
 };

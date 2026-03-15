@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<title>Military Fitness Coaching Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<h1>Military Fitness Coaching Dashboard</h1>
+
+<a href="wod.html">
+<button class="bigButton">Today's Workout</button>
+</a>
+
+<h2>Coaching Metrics</h2>
+
+<div class="metrics">
+
+<p id="weeklyMEP"></p>
+
+<p id="readiness"></p>
+
+<p id="runPrediction"></p>
+
+<p id="pushPrediction"></p>
+
+<p id="sitPrediction"></p>
+
+<p id="fatLossProjection"></p>
+
+<p id="testScore"></p>
+
+</div>
+
+<h2>Log Workout</h2>
+
+<form id="workoutForm">
+
+<input type="date" id="date" required>
+
+<input type="number" id="week" placeholder="Week">
+
+<select id="type">
+
+<option>Easy Run</option>
+<option>Intervals</option>
+<option>Tempo Run</option>
+<option>Upper Strength</option>
+<option>Lower Strength</option>
+<option>Pushup Situp</option>
+
+</select>
+
+<input id="duration" placeholder="Minutes">
+
+<input id="meps" placeholder="Myzone MEPs">
+
+<input id="avgHR" placeholder="Avg HR">
+
+<input id="distance" placeholder="Miles">
+
+<input id="runtime" placeholder="Run Minutes">
+
+<input id="pushups" placeholder="Pushups">
+
+<input id="situps" placeholder="Situps">
+
+<input id="weight" placeholder="Weight">
+
+<input id="waist" placeholder="Waist">
+
+<textarea id="notes" placeholder="Notes"></textarea>
+
+<button type="submit">Save Workout</button>
+
+</form>
+
+<button onclick="exportCSV()">Export CSV</button>
+
+<h2>Charts</h2>
+
+<canvas id="mepChart"></canvas>
+
+<canvas id="weightChart"></canvas>
+
+<canvas id="runChart"></canvas>
+
+<h2>Workout Log</h2>
+
+<table id="logTable">
+
+<thead>
+
+<tr>
+
+<th>Date</th>
+<th>Week</th>
+<th>Workout</th>
+<th>MEPs</th>
+<th>Pushups</th>
+<th>Situps</th>
+<th>Distance</th>
+<th>Weight</th>
+
+</tr>
+
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+<script src="app.js"></script>
+
+</body>
+
+</html>

@@ -1,44 +1,43 @@
 // ---------------------- wod.js ----------------------
 
-// Default program start date
-let programStart = new Date("03/16/2026");
+// Default program start date (fallback)
+let programStart = new Date(2026, 2, 16); // March 16, 2026 (month 0-indexed)
 
-// ---------------- Parse MM/DD/YYYY safely ----------------
-function parseDateMMDDYYYY(str) {
-    // expects "MM/DD/YYYY"
+// Load saved program start date from localStorage
+if(localStorage.getItem("programStart")){
+    const saved = localStorage.getItem("programStart");
+    programStart = parseDateMMDDYYYY(saved) || programStart;
+}
+
+// Parse MM/DD/YYYY safely
+function parseDateMMDDYYYY(str){
+    if(!str) return null;
     const parts = str.split("/");
     if(parts.length !== 3) return null;
-    const month = parseInt(parts[0], 10) - 1; // JS months 0–11
-    const day = parseInt(parts[1], 10);
-    const year = parseInt(parts[2], 10);
-    return new Date(year, month, day); // time defaults to 00:00 local
+    const mm = parseInt(parts[0],10);
+    const dd = parseInt(parts[1],10);
+    const yyyy = parseInt(parts[2],10);
+    if(isNaN(mm) || isNaN(dd) || isNaN(yyyy)) return null;
+    return new Date(yyyy, mm-1, dd); // monthIndex 0-based
 }
 
-// ---------------- Load saved program start date ----------------
-if(localStorage.getItem("programStart")){
-    const saved = parseDateMMDDYYYY(localStorage.getItem("programStart"));
-    if(saved) programStart = saved;
-}
-
-// ---------------- Calculate current program week/day ----------------
+// ----------------- Calculate program week/day -----------------
 function getProgramDay(){
     const today = new Date();
-    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const todayNoTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const programStartNoTime = new Date(programStart.getFullYear(), programStart.getMonth(), programStart.getDate());
 
-    const start = new Date(programStart.getFullYear(), programStart.getMonth(), programStart.getDate());
-
-    if(todayDate < start){
+    if(todayNoTime < programStartNoTime){
         return {week:0, day:0};
     }
 
-    const diff = Math.floor((todayDate - start) / (1000*60*60*24));
-    const week = Math.floor(diff / 6) + 1; // 6-day training week
-    const day = (diff % 6) + 1; // Day 1–6
-
+    const diffDays = Math.floor((todayNoTime - programStartNoTime)/(1000*60*60*24));
+    const week = Math.floor(diffDays/6) + 1; // 6-day training week
+    const day = (diffDays % 6) + 1; // Day 1-6
     return {week, day};
 }
 
-// ---------------- Running Progression ----------------
+// ---------------- Running progression ----------------
 const runningProgression = {
     1:{easy:"1.5 mi", intervals:"4 x 400m", tempo:"1 easy + 1 tempo"},
     2:{easy:"1.5 mi", intervals:"4 x 400m", tempo:"1 easy + 1 tempo"},
@@ -62,81 +61,24 @@ const runningProgression = {
     20:{easy:"2 mi", intervals:"4 x 400m", tempo:"test prep"}
 };
 
-// ---------------- Generate Workout Text ----------------
-function generateWorkout(week, day) {
-    if(week < 1 || week > 20){
-        return "Program has not started or has finished.";
-    }
-
+// ---------------- Generate WOD text ----------------
+function generateWorkout(week, day){
+    if(week < 1 || week > 20) return "Program has not started or has finished.";
     const run = runningProgression[week];
-
     switch(day){
-        case 1: return `Upper Body + Intervals
-
-Warmup
-5 min jog
-Arm circles x15
-
-Strength 3 rounds
-Pushups 12
-DB rows 12
-Shoulder press 10
-Plank 30 sec
-
-Run Intervals
-${run.intervals}
-
-Rest 90 sec between intervals`;
-
-        case 2: return `Lower Body + Core
-
-3 rounds
-Bodyweight squats 12
-Reverse lunges 10 each
-Glute bridge 15
-Dead bugs 10 each
-Side plank 20 sec`;
-
-        case 3: return `Easy Run
-
-Distance: ${run.easy}
-
-Goal: Conversational pace
-Build aerobic endurance`;
-
-        case 4: return `Pushup Situp Volume
-
-4 rounds
-Pushups 12
-Situps 15
-Plank 30 sec
-
-Rest 60 sec`;
-
-        case 5: return `Tempo Run
-
-Warmup 5 min jog
-
-Run: ${run.tempo}
-
-Goal: Moderate pace near test effort`;
-
-        case 6: return `Recovery Day
-
-Options:
-30 min walk
-Mobility work
-Light cycling
-Foam rolling`;
-
+        case 1: return `Upper Body + Intervals\n\nWarmup\n5 min jog\nArm circles x15\n\nStrength 3 rounds\nPushups 12\nDB rows 12\nShoulder press 10\nPlank 30 sec\n\nRun Intervals\n${run.intervals}\n\nRest 90 sec between intervals`;
+        case 2: return `Lower Body + Core\n\n3 rounds\nBodyweight squats 12\nReverse lunges 10 each\nGlute bridge 15\nDead bugs 10 each\nSide plank 20 sec`;
+        case 3: return `Easy Run\n\nDistance: ${run.easy}\n\nGoal: Conversational pace\nBuild aerobic endurance`;
+        case 4: return `Pushup Situp Volume\n\n4 rounds\nPushups 12\nSitups 15\nPlank 30 sec\n\nRest 60 sec`;
+        case 5: return `Tempo Run\n\nWarmup 5 min jog\n\nRun: ${run.tempo}\n\nGoal: Moderate pace near test effort`;
+        case 6: return `Recovery Day\n\nOptions:\n30 min walk\nMobility work\nLight cycling\nFoam rolling`;
         default: return "Rest or program not scheduled for today.";
     }
 }
 
-// ---------------- Load Today's WOD ----------------
-function loadWOD() {
+// ---------------- Load WOD ----------------
+function loadWOD(){
     const p = getProgramDay();
-
     const weekEl = document.getElementById("weekDisplay");
     const dayEl = document.getElementById("dayDisplay");
     const wodEl = document.getElementById("wodContainer");
@@ -144,7 +86,7 @@ function loadWOD() {
     if(p.week === 0){
         weekEl.innerText = "Program has not started yet.";
         dayEl.innerText = "";
-        wodEl.innerText = "Please set a valid start date (MM/DD/YYYY) on the dashboard.";
+        wodEl.innerText = "Please set a valid start date (MM/DD/YYYY) above.";
         return;
     }
 
@@ -153,28 +95,26 @@ function loadWOD() {
     wodEl.innerText = generateWorkout(p.week, p.day);
 }
 
-loadWOD();
-
-// ---------------- Set Program Start Date Dynamically ----------------
+// ---------------- Set program start ----------------
 function setProgramStart(){
     const input = document.getElementById("programStartInput").value;
-    const date = parseDateMMDDYYYY(input);
-    if(date){
-        programStart = date;
+    const parsed = parseDateMMDDYYYY(input);
+    if(parsed){
+        programStart = parsed;
         localStorage.setItem("programStart", input);
-        alert("Program start date set to: " + input);
-        loadWOD(); // Refresh today's workout
+        loadWOD();
+        alert("Program start date set to " + input);
     } else {
-        alert("Invalid date! Use MM/DD/YYYY format.");
+        alert("Invalid date. Use MM/DD/YYYY format.");
     }
 }
 
-// ---------------- Pre-fill date input ----------------
+// ---------------- Pre-fill input ----------------
 window.onload = () => {
-    if(document.getElementById("programStartInput")){
-        const mm = (programStart.getMonth()+1).toString().padStart(2,'0');
-        const dd = programStart.getDate().toString().padStart(2,'0');
-        const yyyy = programStart.getFullYear();
-        document.getElementById("programStartInput").value = `${mm}/${dd}/${yyyy}`;
-    }
+    const inputEl = document.getElementById("programStartInput");
+    const mm = String(programStart.getMonth()+1).padStart(2,'0');
+    const dd = String(programStart.getDate()).padStart(2,'0');
+    const yyyy = programStart.getFullYear();
+    if(inputEl) inputEl.value = `${mm}/${dd}/${yyyy}`;
+    loadWOD();
 };

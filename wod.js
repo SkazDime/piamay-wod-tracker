@@ -4,7 +4,7 @@
 // ============================================
 
 // Program starts on January 1, 2024
-const programStart = new Date(2024, 0, 1);
+const programStart = new Date(2026, 3, 16);
 
 // 20-week training program with daily workouts
 const trainingProgram = [
